@@ -33,6 +33,11 @@ h1 {
     font-weight: 300;
 }
 
+.clock {
+	display: inline-block;
+	margin: 0 1rem;
+}
+
 /*
  * Styles for the deck of cards
  */
