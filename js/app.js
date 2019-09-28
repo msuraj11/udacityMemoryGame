@@ -3,6 +3,8 @@
  */
 let cards = document.getElementsByClassName("card");
 
+let modal = document.getElementById("modal");
+
 let allCards = [...cards];
 
 let openCards = [];
@@ -24,6 +26,8 @@ let hours = 0;
 let minutes = 0;
 
 const stars = [...document.getElementsByClassName("fa-star")];
+
+let cardMatched = 0;
 
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
@@ -88,6 +92,7 @@ const count = () => {
 }
 
 const reset = () => {
+    modal.style.display = "none";
     openCards = [];
     counter = 0;
     moves.innerHTML = 0;
@@ -96,6 +101,7 @@ const reset = () => {
     seconds = 0;
     clock.innerHTML = "0 minutes 0 seconds";
     clearInterval(timer);
+    cardMatched = 0;
     allCards = shuffle(allCards);
     for (let i = 0; i < allCards.length; i++) {
         deck.innerHTML = "";
@@ -122,12 +128,14 @@ allCards.forEach(card => {
             //Not allowing other cards to be clicked when we click 2-cards
             disableAllCards();
              if (openCards[0].type === openCards[1].type) {
-                 openCards[0].classList.add('match');
-                 openCards[1].classList.add('match');
-                 //Making openCards Array to empty for reusing it
-                 openCards=[];
-                 //Allowing to click if cards matched
-                 enableAllCards();
+                openCards[0].classList.add('match');
+                openCards[1].classList.add('match');
+                cardMatched++;
+                console.log(cardMatched);
+                //Making openCards Array to empty for reusing it
+                openCards=[];
+                //Allowing to click if cards matched
+                enableAllCards();
             } else {
                 //Added color effect if mismatch occurs
                 openCards.forEach(item => {
@@ -143,6 +151,9 @@ allCards.forEach(card => {
                     enableAllCards();
                 },1000);  
             }
+        }
+        if (cardMatched == 8) {
+            modal.style.display = "block";
         }
     });
 });
