@@ -3,6 +3,8 @@
  */
 let cards = document.getElementsByClassName("card");
 
+let modal = document.getElementById("modal");
+
 let allCards = [...cards];
 
 let openCards = [];
@@ -12,6 +14,20 @@ let counter = 0;
 let deck = document.getElementById("deckList");
 
 let moves = document.querySelector(".moves");
+
+let clock = document.querySelector(".clock");
+
+let timer;
+
+let seconds = 0;
+
+let hours = 0;
+
+let minutes = 0;
+
+const stars = [...document.getElementsByClassName("fa-star")];
+
+let cardMatched = 0;
 
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
@@ -41,51 +57,51 @@ const enableAllCards = () => {
     }
 }
 
-// const render = (allCards) => {
-//     for (let i = 0; i < allCards.length; i++) {
-        
-//         allCards[i].addEventListener('click', () => {
-//             openCards.push(allCards[i]);
-//             //To open the card & 'disabled' is to make sure card is not clicked double times.
-//             allCards[i].classList.add('open', 'show', 'disabled');
-//             if (openCards.length == 2) {
-//                 //Not allowing other cards to be clicked when we click 2-cards
-//                 disableAllCards();
-//                  if (openCards[0].type === openCards[1].type) {
-//                      openCards[0].classList.add('match');
-//                      openCards[1].classList.add('match');
-//                      //Making openCards Array to empty for reusing it
-//                      openCards=[];
-//                      //Allowing to click other cards if cards matched
-//                      enableAllCards();
-//                 } else {
-//                     //Added color effect if mismatch occurs
-//                     openCards.forEach(item => {
-//                         item.classList.add('unmatch');
-//                     });
-//                     //Disappear the mismatch color & card after 1 second
-//                     setTimeout(() => {
-//                         openCards.forEach(item => {
-//                             item.classList.remove('open', 'show', 'disabled', 'unmatch');
-//                         });
-//                         openCards=[];
-//                         //Allowing to click after cards mismatched
-//                         enableAllCards();
-//                     },1000);  
-//                 }
-//             }
-//         });
-//     }
-// }
 
 const count = () => {
     moves.innerHTML = ++counter;
+    if (counter == 1) {
+        timer = setInterval(() => {
+            clock.innerHTML = hours ? hours+ "hour(s)" +minutes+" minutes "+seconds+" seconds " : 
+                                        minutes+" minutes "+seconds+" seconds " ;
+            seconds++;
+            if (seconds == 60) {
+                minutes++;
+                seconds=0;
+            }
+            if (minutes == 60) {
+                hours++;
+                minutes=0;
+            }
+            if ((counter > 8 && counter <= 16) || ((minutes*60 + seconds > 60 ) && (minutes*60 + seconds <= 90))) {
+                for(let i= 0; i < 3; i++){
+                    if(i > 1){
+                        stars[i].style.color = "black";
+                    }
+                }
+            } else if (counter > 16 || (minutes*60 + seconds > 90 )){
+                for(let i= 0; i < 3; i++){
+                    if(i > 0){
+                        stars[i].style.color = "black";
+                    }
+                }
+            }
+        },1000);
+    }
+    
 }
 
 const reset = () => {
+    modal.style.display = "none";
     openCards = [];
     counter = 0;
     moves.innerHTML = 0;
+    hours = 0;
+    minutes = 0;
+    seconds = 0;
+    clock.innerHTML = "0 minutes 0 seconds";
+    clearInterval(timer);
+    cardMatched = 0;
     allCards = shuffle(allCards);
     for (let i = 0; i < allCards.length; i++) {
         deck.innerHTML = "";
@@ -94,7 +110,9 @@ const reset = () => {
         });
         allCards[i].classList.remove('open', 'show', 'match', 'disabled');
     }
-    //render(allCards);
+    stars.forEach(star => {
+        star.style.color = "#9cca1c";
+    });
 }
 
 document.onload = reset();
@@ -110,12 +128,14 @@ allCards.forEach(card => {
             //Not allowing other cards to be clicked when we click 2-cards
             disableAllCards();
              if (openCards[0].type === openCards[1].type) {
-                 openCards[0].classList.add('match');
-                 openCards[1].classList.add('match');
-                 //Making openCards Array to empty for reusing it
-                 openCards=[];
-                 //Allowing to click if cards matched
-                 enableAllCards();
+                openCards[0].classList.add('match');
+                openCards[1].classList.add('match');
+                cardMatched++;
+                console.log(cardMatched);
+                //Making openCards Array to empty for reusing it
+                openCards=[];
+                //Allowing to click if cards matched
+                enableAllCards();
             } else {
                 //Added color effect if mismatch occurs
                 openCards.forEach(item => {
@@ -131,6 +151,9 @@ allCards.forEach(card => {
                     enableAllCards();
                 },1000);  
             }
+        }
+        if (cardMatched == 8) {
+            modal.style.display = "block";
         }
     });
 });
