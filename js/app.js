@@ -1,5 +1,6 @@
 /*
  * Created a list that holds all cards
+ * initialization of all parameters
  */
 let cards = document.getElementsByClassName("card");
 
@@ -29,6 +30,12 @@ const stars = [...document.getElementsByClassName("fa-star")];
 
 let cardMatched = 0;
 
+let totalMoves = document.querySelector("#totalMoves");
+
+let totalTime = document.querySelector("#totalTime");
+
+let starRating = document.querySelector("#starRating");
+
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
     let currentIndex = array.length, temporaryValue, randomIndex;
@@ -44,20 +51,27 @@ function shuffle(array) {
     return array;
 };
 
-
+// @description disables/Don't allow to click on cards
+// @param {}
+// @returns void
 const disableAllCards = () => {
     for (let i = 0; i < allCards.length; i++) {
         allCards[i].classList.add('disabled');
     }
-}
+};
 
+// @description enables/allow to click on cards
+// @param {}
+// @returns void
 const enableAllCards = () => {
     for (let i = 0; i < allCards.length; i++) {
         allCards[i].classList.remove('disabled');
     }
-}
+};
 
-
+// @description counts number of moves, time & decides stars
+// @param {}
+// @returns void
 const count = () => {
     moves.innerHTML = ++counter;
     if (counter == 1) {
@@ -89,8 +103,11 @@ const count = () => {
         },1000);
     }
     
-}
+};
 
+// @description resets cards, classList, timer, counter, modal
+// @param {}
+// @returns void
 const reset = () => {
     modal.style.display = "none";
     openCards = [];
@@ -113,60 +130,54 @@ const reset = () => {
     stars.forEach(star => {
         star.style.color = "#9cca1c";
     });
-}
+};
 
+
+//@description: resets everything on page-load/reload
 document.onload = reset();
 
-
+//@description: loops through all cards and adds onclick event-listener, enables counter & time, check matched-cards
 allCards.forEach(card => {
     card.addEventListener('click', () => {
         openCards.push(card);
-        //To open the card & 'disabled' is to make sure card is not clicked double times.
+        //@description: To open the card & 'disabled' is to make sure card is not clicked double times.
         card.classList.add('open', 'show', 'disabled');
         if (openCards.length == 2) {
             count();
-            //Not allowing other cards to be clicked when we click 2-cards
+            //@description: Not allowing other cards to be clicked when we click 2-cards
             disableAllCards();
              if (openCards[0].type === openCards[1].type) {
                 openCards[0].classList.add('match');
                 openCards[1].classList.add('match');
                 cardMatched++;
-                console.log(cardMatched);
-                //Making openCards Array to empty for reusing it
+                //@description: Making openCards Array to empty for reusing it
                 openCards=[];
-                //Allowing to click if cards matched
+                //@description: Allowing to click if cards matched
                 enableAllCards();
             } else {
-                //Added color effect if mismatch occurs
+                //@description: Added color effect if mismatch occurs
                 openCards.forEach(item => {
                     item.classList.add('unmatch');
                 });
-                //Disappear the mismatch color & card after 1 second
+                //@description: Disappear the mismatch color & card after 1 second
                 setTimeout(() => {
                     openCards.forEach(item => {
                         item.classList.remove('open', 'show', 'disabled', 'unmatch');
                     });
                     openCards=[];
-                    //Allowing to click after cards mismatched
+                    //@description: Allowing to click after cards mismatched
                     enableAllCards();
                 },1000);  
             }
         }
+        //@description: if all cards matched then show popup
         if (cardMatched == 8) {
             modal.style.display = "block";
+            totalMoves.innerHTML = counter;
+            totalTime.innerHTML = clock.innerHTML;
+            clearInterval(timer);
+            starRating.innerHTML = document.querySelector(".stars").innerHTML;
         }
     });
 });
 
-
-
-/*
- * set up the event listener for a card. If a card is clicked:
- *  - display the card's symbol (put this functionality in another function that you call from this one)
- *  - add the card to a *list* of "open" cards (put this functionality in another function that you call from this one)
- *  - if the list already has another card, check to see if the two cards match
- *    + if the cards do match, lock the cards in the open position (put this functionality in another function that you call from this one)
- *    + if the cards do not match, remove the cards from the list and hide the card's symbol (put this functionality in another function that you call from this one)
- *    + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
- *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
- */
