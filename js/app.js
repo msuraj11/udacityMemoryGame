@@ -74,32 +74,33 @@ const enableAllCards = () => {
 // @returns void
 const count = () => {
     moves.innerHTML = ++counter;
-    if (counter == 1) {
+    if (counter === 1) {
         timer = setInterval(() => {
-            clock.innerHTML = hours ? hours+ "hour(s)" +minutes+" minutes "+seconds+" seconds " : 
-                                        minutes+" minutes "+seconds+" seconds " ;
+            //moved clock.innerHTML @ the end of setInterval to remove 1 second delay
             seconds++;
-            if (seconds == 60) {
+            if (seconds === 60) {
                 minutes++;
                 seconds=0;
             }
-            if (minutes == 60) {
+            if (minutes === 60) {
                 hours++;
                 minutes=0;
             }
             if ((counter > 8 && counter <= 16) || ((minutes*60 + seconds > 60 ) && (minutes*60 + seconds <= 90))) {
-                for(let i= 0; i < 3; i++){
+                for(let i = 0; i < 3; i++){
                     if(i > 1){
                         stars[i].style.color = "black";
                     }
                 }
             } else if (counter > 16 || (minutes*60 + seconds > 90 )){
-                for(let i= 0; i < 3; i++){
+                for(let i = 0; i < 3; i++){
                     if(i > 0){
                         stars[i].style.color = "black";
                     }
                 }
             }
+            clock.innerHTML = hours ? hours+ "hour(s)" +minutes+" minutes "+seconds+" seconds " : 
+                                        minutes+" minutes "+seconds+" seconds " ;
         },1000);
     }
     
@@ -142,7 +143,7 @@ allCards.forEach(card => {
         openCards.push(card);
         //@description: To open the card & 'disabled' is to make sure card is not clicked double times.
         card.classList.add('open', 'show', 'disabled');
-        if (openCards.length == 2) {
+        if (openCards.length === 2) {
             count();
             //@description: Not allowing other cards to be clicked when we click 2-cards
             disableAllCards();
@@ -171,7 +172,7 @@ allCards.forEach(card => {
             }
         }
         //@description: if all cards matched then show popup
-        if (cardMatched == 8) {
+        if (cardMatched === 8) {
             modal.style.display = "block";
             totalMoves.innerHTML = counter;
             totalTime.innerHTML = clock.innerHTML;
